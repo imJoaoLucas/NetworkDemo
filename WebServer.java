@@ -13,14 +13,19 @@ public class WebServer {
    public void start(int portNumber) {
       try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
          System.out.println("Waiting for clients...");
+         
          Socket clientSocket = serverSocket.accept(); //A single client connection
+         System.out.println("Client Connected!");
          String clientIp = clientSocket.getInetAddress().getHostAddress(); //Gets the client ip address
          int clientPort = clientSocket.getPort(); //Gets the client TCP port
-         BufferedReader clientInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); //Creates a buffered stream with the received data
-         
-         for (String input; (input = clientInput.readLine()) != null;) {
-            String formatedInput = input.toUpperCase();
-            System.out.printf("(%s:%d): %s%n", clientIp, clientPort, formatedInput);
+         try (BufferedReader clientInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+              PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(),true)) { //Creates a buffered stream with the received data
+            
+            for (String input; (input = clientInput.readLine()) != null;) {
+               String formatedInput = input.toUpperCase();
+               System.out.printf("(%s:%d): %s%n", clientIp, clientPort, formatedInput);
+               writer.println("Formated input: " + formatedInput);
+            }
          }
       } catch (IOException e) {
          throw new RuntimeException(e);
