@@ -19,10 +19,11 @@ public class WebServer {
          BufferedReader clientInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); //Creates a buffered stream with the received data
          
          for (String input; (input = clientInput.readLine()) != null;) {
-            System.out.printf("%s:%d: %s%n", clientIp, clientPort, input);
+            String formatedInput = input.toUpperCase();
+            System.out.printf("(%s:%d): %s%n", clientIp, clientPort, formatedInput);
          }
       } catch (IOException e) {
-         e.printStackTrace();
+         throw new RuntimeException(e);
       }
    }
 }
